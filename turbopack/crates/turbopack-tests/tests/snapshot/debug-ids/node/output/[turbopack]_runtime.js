@@ -478,7 +478,7 @@ contextPrototype.g = globalThis;
 function applyModuleFactoryName(factory) {
     // Give the module factory a nice name to improve stack traces.
     Object.defineProperty(factory, 'name', {
-        value: '__TURBOPACK__module__evaluation__'
+        value: 'module evaluation'
     });
 }
 /* eslint-disable @typescript-eslint/no-unused-vars */ /// <reference path="../shared/runtime-utils.ts" />
