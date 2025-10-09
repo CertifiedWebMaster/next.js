@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { connection } from 'next/server'
-import { setTimeout } from 'timers/promises'
 import { HydrationIndicator } from '../../hydration-indicator'
+import waitForMarkerFile from '../../../waitForMarkerFile'
 import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,7 +32,7 @@ export default async function Page() {
 
 async function SlowServerComponent({ delay }: { delay: number }) {
   await connection()
-  await setTimeout(delay)
+  await waitForMarkerFile()
   const randomValue = Math.floor(Math.random() * 1000)
   return (
     <div id="dynamic">

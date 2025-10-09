@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { connection } from 'next/server'
-import { setTimeout } from 'timers/promises'
 import { HydrationIndicator } from '../../hydration-indicator'
+import waitForMarkerFile from '../../../waitForMarkerFile'
 
 export default function Page() {
   return (
@@ -21,7 +21,7 @@ export default function Page() {
 
 async function SlowServerComponent({ delay }: { delay: number }) {
   await connection()
-  await setTimeout(delay)
+  await waitForMarkerFile()
   const randomValue = Math.floor(Math.random() * 1000)
   return (
     <div id="dynamic">
