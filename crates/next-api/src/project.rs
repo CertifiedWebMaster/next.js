@@ -1089,7 +1089,11 @@ impl Project {
                 self.next_config().computed_asset_prefix().owned().await?,
             )
         } else {
-            get_server_chunking_context(options)
+            get_server_chunking_context(
+                options,
+                self.client_relative_path().owned().await?,
+                self.next_config().computed_asset_prefix().owned().await?,
+            )
         })
     }
 
@@ -1115,10 +1119,14 @@ impl Project {
             get_edge_chunking_context_with_client_assets(
                 options,
                 self.client_relative_path().owned().await?,
-                self.next_config().computed_asset_prefix(),
+                self.next_config().computed_asset_prefix().owned().await?,
             )
         } else {
-            get_edge_chunking_context(options)
+            get_edge_chunking_context(
+                options,
+                self.client_relative_path().owned().await?,
+                self.next_config().computed_asset_prefix().owned().await?,
+            )
         })
     }
 
