@@ -1434,7 +1434,7 @@ export const defaultConfig = Object.freeze({
     caseSensitiveRoutes: false,
     clientSegmentCache: true,
     rdcForNavigations: false,
-    clientParamParsing: false,
+    clientParamParsing: true,
     clientParamParsingOrigins: undefined,
     dynamicOnHover: false,
     preloadEntriesOnStart: true,
