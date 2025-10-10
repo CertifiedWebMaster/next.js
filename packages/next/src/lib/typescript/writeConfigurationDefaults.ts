@@ -187,7 +187,8 @@ export async function writeConfigurationDefaults(
   isFirstTimeSetup: boolean,
   hasAppDir: boolean,
   distDir: string,
-  hasPagesDir: boolean
+  hasPagesDir: boolean,
+  isolatedDevBuild: boolean | undefined
 ): Promise<void> {
   if (isFirstTimeSetup) {
     writeFileSync(tsConfigPath, '{}' + os.EOL)
@@ -267,25 +268,41 @@ export async function writeConfigurationDefaults(
     }
   }
 
-  const nextAppTypes = `${distDir}/types/**/*.ts`
+  const nextAppTypes: string[] = [`${distDir}/types/**/*.ts`]
+
+  if (isolatedDevBuild !== false) {
+    nextAppTypes.push(
+      process.env.NODE_ENV === 'development'
+        ? // During dev, `distDir` is set to `distDir/dev` by default,
+          // so here we add a path that removes `/dev`.
+          `${distDir.slice(0, -3)}/types/**/*.ts`
+        : // During build, `distDir` is `distDir`, so here we add a
+          // path with `/dev` for consistency.
+          `${distDir}/dev/types/**/*.ts`
+    )
+    // Sort the array to ensure consistent order.
+    nextAppTypes.sort((a, b) => a.length - b.length)
+  }
 
   if (!('include' in userTsConfig)) {
     userTsConfig.include = hasAppDir
-      ? ['next-env.d.ts', nextAppTypes, '**/*.mts', '**/*.ts', '**/*.tsx']
+      ? ['next-env.d.ts', ...nextAppTypes, '**/*.mts', '**/*.ts', '**/*.tsx']
       : ['next-env.d.ts', '**/*.mts', '**/*.ts', '**/*.tsx']
     suggestedActions.push(
       cyan('include') +
         ' was set to ' +
         bold(
           hasAppDir
-            ? `['next-env.d.ts', '${nextAppTypes}', '**/*.mts', '**/*.ts', '**/*.tsx']`
+            ? `['next-env.d.ts', ${nextAppTypes.map((type) => `'${type}'`).join(', ')}, '**/*.mts', '**/*.ts', '**/*.tsx']`
             : `['next-env.d.ts', '**/*.mts', '**/*.ts', '**/*.tsx']`
         )
     )
   } else if (hasAppDir) {
     const missingFromResolved = []
-    if (!userTsConfig.include.includes(nextAppTypes)) {
-      missingFromResolved.push(nextAppTypes)
+    for (const type of nextAppTypes) {
+      if (!userTsConfig.include.includes(type)) {
+        missingFromResolved.push(type)
+      }
     }
 
     if (missingFromResolved.length > 0) {
