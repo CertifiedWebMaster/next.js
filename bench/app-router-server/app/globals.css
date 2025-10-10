@@ -1,0 +1,7 @@
+@theme inline {
+}
+
+@layer theme, base;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
